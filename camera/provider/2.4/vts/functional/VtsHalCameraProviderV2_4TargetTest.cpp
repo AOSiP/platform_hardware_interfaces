@@ -4861,6 +4861,23 @@ Status CameraHidlTest::getJpegBufferSize(camera_metadata_t *staticMeta, uint32_t
     return Status::OK;
 }
 
+// Get max jpeg buffer size in android.jpeg.maxSize
+Status CameraHidlTest::getJpegBufferSize(camera_metadata_t *staticMeta, uint32_t* outBufSize) {
+    if (nullptr == staticMeta || nullptr == outBufSize) {
+        return Status::ILLEGAL_ARGUMENT;
+    }
+
+    camera_metadata_ro_entry entry;
+    int rc = find_camera_metadata_ro_entry(staticMeta,
+            ANDROID_JPEG_MAX_SIZE, &entry);
+    if ((0 != rc) || (1 != entry.count)) {
+        return Status::ILLEGAL_ARGUMENT;
+    }
+
+    *outBufSize = static_cast<uint32_t>(entry.data.i32[0]);
+    return Status::OK;
+}
+
 // Check if the camera device has logical multi-camera capability.
 Status CameraHidlTest::isLogicalMultiCamera(const camera_metadata_t *staticMeta) {
     Status ret = Status::METHOD_NOT_SUPPORTED;
